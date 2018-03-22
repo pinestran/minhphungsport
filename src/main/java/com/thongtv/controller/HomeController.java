@@ -1,9 +1,5 @@
 package com.thongtv.controller;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,28 +8,25 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.thongtv.entities.Employee;
-import com.thongtv.entities.Product;
-
 @Controller
 @RequestMapping("/")
 public class HomeController {
 	
-	@Autowired
-	SessionFactory sessionFactory;
+	/*@Autowired
+	SessionFactory sessionFactory;*/
 	
 	@GetMapping
-	@Transactional
-	public String loginPage(ModelMap model) {
+	//@Transactional
+	public String loginPage() {
 		
-		Session session = this.sessionFactory.getCurrentSession();
+		/*Session session = this.sessionFactory.getCurrentSession();
 		
 		Employee employee = new Employee();
 		employee.setName("Bết Bánh");
 		employee.setAddress("Vịnh Bắc Bộ");
 		employee.setAge(14);
 		
-		Set<Product> listSet = new HashSet<>();
+		Set<Product> listSet = new HashSet<Product>();
 		Product product1 = new Product();
 		product1.setName("Bánh Bao");
 		product1.setPrice(13.000);
@@ -52,8 +45,8 @@ public class HomeController {
 		
 		employee.setSet(listSet);
 		
-		session.save(employee);
+		session.save(employee);*/
 		
-		return "index";
+		return "login";
 	}
 }

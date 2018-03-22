@@ -130,6 +130,15 @@ ul{
     box-shadow: 0px 2px 4px 0px #000;
 }
 
+.input-icon-account{
+	background: url(../images/account.png) no-repeat scroll 16px 13px;
+    height: 38px;
+    border: 0;
+    background-color: #D8D8D8;
+    width: 100%;
+    padding-left: 42px;
+}
+
 .input-icon-email{
 	background: url(../Image/ic_email.png) no-repeat scroll 16px 13px;
     height: 38px;

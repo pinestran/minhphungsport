@@ -44,6 +44,7 @@
 						
 						<div class="container-signup-form" id="container-center-login-right">
 							<form action="" method="post">
+								<input id="username" name="username" class="material-textinput input-icon-account" placeholder="Username" type="text" /><br/><p></p>
 								<input id="email" name="email" class="material-textinput input-icon-email" placeholder="Email" type="text" /><br/><p></p>
 								<input id="matkhau" name="matkhau" class="material-textinput input-icon-password" placeholder="Mật khẩu " type="password" /><br/><p></p>
 								<input id="nhaplaimatkhau" name="nhaplaimatkhau" class="material-textinput input-icon-password" placeholder="Nhập lại mật khẩu " type="password" /><br/>
