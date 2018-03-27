@@ -1,0 +1,543 @@
+ 
+
+VIDEO 1:
+1) set up environment:
+	Download STS: https://spring.io/tools/sts/all
+	Cài JDK và maven: set đường dẫn environment variable trỏ tời thư mục. (Maven ra đời 2014)
+		maven: M2 trỏ vô bin của maven, M2_HOME trỏ vô thư mục maven 
+		jdk: JAVA_HOME trỏ vô gói jar nằm trong thư  mục cài jdk.
+
+	Download tomcat: 
+2) Run STS and create New maven project. (use default, war)
+3) In pom.xml
+	Bộ thư viện maven: maven reponsitory. 
+	Search: 1)spring web mvc library of mvc. 2)Junit for test. 3) javax for servlet. (javax)
+    jstl library. 
+4) InternalResourceViewResolver
+	<context:component-scan base-package="com.thongtv.controller"/>
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
+
+VIDEO 2:
+1) Meterials. Key Search: spring-framework-reference
+	Meterials: https://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html
+	https://docs.spring.io/spring/docs/current/spring-framework-reference/index.html
+
+VIDEO 3:
+2) IoC: this is file configure of bean definition. In resource folder create a configurate bean file name: IoC.xml
+	then in dispatcher-serverlet.xml file point to IoC.xml:  <import resource="classpath:IoC.xml"/> 
+
+3) String beans and String core(pojo) được liên kết nhờ applycationcontext. 
+	ApplicationContext context = new ClassPathXmlApplicationContext("IoC.xml");
+		NhanVien nv = (NhanVien)context.getBean("nhanvien");	
+
+VIDEO 4:
+1) set value for bean in IoC file.  (factory bean)
+	<property name="[name-attribute-in-bean]" value="" />
+
+VIDEO 5:
+1) bean life cycle
+	 init-method="init" destroy-method="destroy"
+
+VIDEO 6: Cách tao class trong factory bean.
+1) Khởi tạo đối tượng thông qua bean có chứa class thì hàm instance trong lass phải là static, và factory-method phải trỏ tới instance.
+	* In bean factory: <bean id="nhanvien" class="com.thongtv.entities.NhanVien" factory-method="createNhanVien"/>
+	* In class NhanVien: function instance
+		public static NhanVien createNhanVien(){ return new NhanVien();}
+2) khởi tạo đối tượng thông qua 1 bean có trước. thì instance k cần static. ở đây ta cần khởi tạo nhanvien1
+	* In factory bean file: <bean id="nhanvien" class="com.thongtv.entities.NhanVien"/>
+			<bean id="nhanvien1" factory-bean="nhanvien" factory-method="createNhanVien"/>
+	* In class NhanVien: 
+		public NhanVien createNhanVien(){ return new NhanVien();}
+
+VIDEO 7: Tạo Bean Phương thức khởi tạo có tham số. <constructor-arg name="" type="" value="" ref="" />
+1) Trong bean factory file: giả sử trong class nhanvien có phương thức khởi tạo 2 tham số ( name, age)
+	<bean id="nhanvien" class="com.thongtv.entities.NhanVien">
+		<constructor-arg value="Tran Van Thong" />
+		<constructor-arg value="18" />
+	</bean>
+
+2) ref là thuộc tính để trỏ tới class khác có phương thức khởi tạo trong đó. trong class nhanvien có hàm khởi tạo 1 tham số (giamdoc)
+	<bean id="giamdoc" class="com.thongtv.entities.GiamDoc">
+		<constructor-arg name="chucvu" value="Giam Doc" />
+	</bean>
+	<bean id="nhanvien" class="com.thongtv.entities.NhanVien">
+		<constructor-arg ref="giamdoc" />
+	</bean>
+
+VIDEO 8: Gán Giá trị cho list in factory bean file.
+1) Với kiểu dữ liệu thông thường: (String, int, float, boolean...)
+	* Tạo 1 biến List<String> lst  trong class NhanVien
+	<bean id="nhanvien" class="com.thongtv.entities.NhanVien">
+		<property name="lst">
+			<list>
+				<value>....</value>
+			</list>
+		</property>
+	</bean>
+2) Với kiểu dữ liệu tự tạo: thay <value> thành <ref bean="[id of bean which initial in bean factory file]"/>. EX: <ref bean="giamdoc" />
+
+VIDEO 9: Gán giá trị cho map in factory bean file.
+1) dùng value đối vs kiểu dữ liệu thông thường. value-ref đối vs kiểu dữ liệu tự tạo.
+	<bean id="nhanvien" class="com.thongtv.entities.NhanVien">
+		<property name="map">
+			<map>
+				<entry key="key1" value="Thong Tran"/>
+				<entry key="key2" value-ref="giamdoc"/>
+			</map>	
+		</property>
+	</bean>
+2) Cách lấy giá trị từ map
+	* Lấy trực tiếp theo key: GiamDoc value = (GiamDoc)nhanvien.getMap().get("key2");
+	* Lấy cả map: for(Entry<String,Object> entry : nhanvien.getMap().entrySet())
+			{System.out.println(entry.getKey() + " -- " + entry.getValue() );}
+
+VIDEO 10: Gán giá trị cho property in factory bean file
+1) tạo 1 biến Properties trong lass nhanvien (java.util) và tạo getter setter cho nó.
+	private Properties prop;
+2) trong IoC.
+	<bean id="nhanvien" class="com.thongtv.entities.NhanVien">
+		<property name="prop">
+			<props>
+				<prop key="jdbc">com.connect.thongtv</prop>
+			</props>
+		</property>
+	</bean>
+3) gọi ra sử dụng.
+	String jdbc = nv.getProp().getProperty("jdbc");
+
+VIDEO 11: 
+1) Scope: "singleton" --> khởi tạo 1 lần cho tất cả các lần gọi về sau.(xài chung 1 đối tượng)
+	<bean id="nhanvien" class="com.thongtv.entities.NhanVien" scope="singleton">
+2) Scope : "prototype" --> duoc khởi tạo sau mỗi lần gọi.(tạo mới 1 đối tượng)	
+	<bean id="nhanvien" class="com.thongtv.entities.NhanVien" scope="prototype">
+
+
+VIDEO 12: Inner bean, depends-on
+1) inner bean: (bean được khởi tạo trong bean)
+		<bean id="nhanvien" class="com.thongtv.entities.NhanVien">
+			<property name="giamDoc">
+				<!-- instead call to the outside bean. Use: ref="idbean" -->
+				<bean class="com.thongtv.entities.GiamDoc">
+					<property name="chucvu" value="Developer" />
+				</bean>
+			</property>
+		</bean>	
+2) depends-on: thay vì sử dụng khởi tạo inner bean trong chính class của nó thì sử dụng depends-on
+		<bean id="beanOne" class="com.thongtv.entities.nhanvien" depends-on="nhanvien, giamdoc"> 
+			<property name="nv" ref="nhanvien"/>
+		</bean>
+		<bean id="nhanvien" class="com....nhanvien"/>
+		<bean id="giamdoc" class="com.....giamdoc"/> 
+
+VIDEO 13: autowire : default, byName, byType, constructor.
+1) byName: depend on variable in class.
+	Tự động duyệt trong file IoC bean các bean có cùng tên vs biến trong class: vd: đã tạo 1 biến "giamdoc" trong class
+	<bean id="giamdoc" class="com.thongtv.entities.GiamDoc">
+		<constructor-arg name="chucvu" value="GiamDoc"/>
+	</bean>
+	<bean id="nhanvien" class="com.thongtv.entities.NhanVien" scope="singleton" autowire="byType"></bean>
+2) byType: dựa theo kiểu dữ liệu của các biến trong class.
+3) Constructor: analogous with byType but depend on constructor variables.
+
+4) Advantaged: tiện lợi. k cần phải khai báo biến trong bean class
+5) Disavantaged (defect): if plenty of vars will loop a lot. and will error if var or type of var not exist. 
+
+
+VIDEO 14: Load resource.
+1) URL connect to get data from web. HttpsURLConnection will return a inputstream.
+		URL url = new URL("https://raw.githubusercontent.com/typicode/json-server/master/db.json");
+			HttpsURLConnection connect = (HttpsURLConnection) url.openConnection();
+			InputStreamReader in = new InputStreamReader(connect.getInputStream());
+			BufferedReader buffer = new BufferedReader(in);
+			
+			String line;
+			while((line=buffer.readLine())!=null) {
+				System.out.println(line);
+			}
+			
+			buffer.close();
+			in.close();
+			connect.disconnect();
+
+2) Use Resource to connect to the file in hard disk
+	Resource resource = context.getResource("file:D:/test.txt");
+		InputStreamReader reader = new InputStreamReader(resource.getInputStream());
+		BufferedReader buffer = new BufferedReader(reader);
+
+3) 	Use Resource to connect to the file in project. (in this case all file in package: "src/main/resources")
+	Resource resource = context.getResource("classpath:test.txt");
+
+4) Use Resource to connect to the file in web browser. 
+	Resource resource = context.getResource("url_web");
+
+5) use ResourceLoader implements ResourceLoaderAware then constructor in bean IoC.xml with autowired="byType";
+	Then use applicationContext  to call to this bean to getResource by link input.
+
+
+Video 15: Concept JSP
+1) life circle of jsp page. 
+	Jsp translator -> servlet -> complide -> java class -> response and init jsp page, server -> destroy.
+
+
+Video 16: 
++) Structure of Spring MVC
++) Structure of request depature: Spring bean configuration file.
++) prefix, subfix of link: 
+	<context:component-scan base-package="com.thongtv.shop1"/>
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>	
+	<import resource="classpath:IoC.xml"/>
+
+Output data in jsp: use JSP Scripting elements. 
++) JSP Sriptlet tag: <% ... %>  cho phép viết code java. 
++) Expresion tag:  <%=  ... %> cho phép xuất ra giá trị code.
++) Declaration tag: <%! ... %>  khai báo biến hay phương thức
++) <h3>${username}</h3>
+
+
+Video 17: return and recieve data from controller and view.
+KEY SEARCH: return type of controller in spring mvc
+Docs: https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/mvc.html
+1) use ModelAndView 
+ 	public ModelAndView getHome(){
+		
+		ModelAndView model = new ModelAndView();
+		String username = "thhong";
+		model.addObject("user", username);
+		model.setViewName("trangchu");
+		return model;
+	}
+
+
+2) Use String
+	public String getHome(ModelMap model){
+		
+		String username = "thhong";
+		model.addAttribute("user", username);
+		return "trangchu";
+	}
+
+
+Video 18: set and get value for list and get value in jsp file. 
++) model.addAttribute("listUser", listUser);
+
+
+Video 19: @RequestParam
+++) @GetMapping : để lấy param trên đường truyền
+++) @PostMapping: Để lấy tham số truyền ngầm
+
+++) @RequestMapping(Path="/...", method=RequestMethod.GET/POST)
+(GET lay parameter bằng cách truyền tham số trên link, và được sử dụng mặc định nếu không khai báo requestmethod)
+ex: https://www.facebook.com?id=01&name=thong use for
+
+++) @RequestParam(name="nameparam", require="true/false") [datatype] [dataname] --> ex: https://www.facebook.com?id=01&name=thong
+
+++) @PathVariable(name="nameparam")  -->ex: https://www.facebook.com/01/thong
+
+
+Video 20: GetParam on url by method get with @PathVariable with annotated.
+## EX: with this link: http://localhost:8080/minishop/detail/234/samsunga8+ 
+==>> param is id and name product.
+	@RequestMapping("/detail/{id}/{nameproduct}")
+	public String goToDetail(@PathVariable("id") int id, @PathVariable("nameproduct") String name, ModelMap map) {
+		map.addAttribute("id", id);
+		map.addAttribute("namesp", name);
+		return "chitiet";
+	}		
+
+Video 21: @MatrixVariable()
+++)  @MatrixVariable(name="nameparam") [datatype][dataname] --> https://www.facebook.com/01;name=thong;date=10-05-1994
+if  "nameparam" giống vs "dataname" use: @MatrixVariable [datatype][dataname] 
+++) Note: <mvc:annotation-driven enable-matrix-variables="true" /> in dispacher-servlet. 
+
+++) use default value when matrixVariable does not has value
+	ex: @MatrixVariable(required=false, defaultValue=1) int id
+
+	
+Vieo 22: Cách truyền và nhận tham số ở RequestMethod.Post.
+@RequestMapping(path="/chitiet", method=RequestMethod.POST)
+                                                         
+
+Video 23: Xử lý từng request trên 1 page, xác định hàm sao cho phù hợp để làm xử lý request.
+++) Mỗi class trong controller để sử lý của mỗi đổi tượng riêng của mỗi đường dẫn. 
+	Đặt @RequestMapping trên đầu mỗi class sao cho phù hợp
+++) @GetMapping ; @GetMapping(....) ; @PostMapping(....) 
+
+
+Video 24:  @ModelAttribute --> lấy giá trị từ form cho đối tượng, chỉ sử dụng phương thức POST
+1) Trong form đặt name cho các thẻ input theo name attributes trong model.
+2) Trong controller. 
+ 	@PostMapping
+	public String goToDetailByPost(@ModelAttribute NhanVien nv, ModelMap map) {
+		map.addAttribute("name", nv.getName());
+		map.addAttribute("age", nv.getAge());
+		map.addAttribute("gender", nv.getGender());
+		return chitiet";
+	}
+
+
+Bài 25: Cấu hình static resource trong dispacher servlet để import other resource (image. js. css)
+	<context:component-scan base-package="com.thongtv.shop1"/>
+	<mvc:annotation-driven enable-matrix-variables="true" />
+	<mvc:resources location="/resources/" mapping="/resources/**"/>
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>	
+	<import resource="classpath:IoC.xml"/>
+
+Bài 26: new ModelAndView("redirect:/") || modelAndView.setViewName("redirect:/")
+
+Bài 27: Tách file css and js and header and footer. 
+1) tải jstl maven.
+2) <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+
+
+Bài 28: Tạo page đăng nhập
+flexbox (default is row)
+++) margin: canh từ border
+++) padding: canh từ chữ
+++) justify-content: xếp các phần tử theo hàng ngang. 
+++) aline-item: xếp các phần tử theo hàng doc 
+
+
+
+
+Bài 30: thư viện jstl
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+++)  <c:out value="${varName}"/>
+++)  <c:set > 
+Set in bean use:
+	<jsp:useBean id="nhanvien" class="com.thongtv.shop1.entities.NhanVien"/>
+	<h4><c:set property="ten" target="${nhanvien}" value="Tran Van Thong"/> <c:out value="${nhanvien.ten}"/> </h4> 
+Set in jsp use:
+	<h4><c:set var="name" value="${value1} nnfoadfd"/> <c:out value="${name}"/> </h4>
+
+++) <c:remove var="varName" />
+++) <c:if  />  **Note: use only for 1 condition. no include "else" just "if"
+	<c:set var="salary" scope="session" value="${2000*2}"/>
+	<c:if test="${salary > 2000}">
+		<p><c:out value="${salary}"/> </p>
+	</c:if>
+
+++) <c:catch >  : bắt và show lỗi trong jsp
+	<c:catch var="catchError">
+		<% int i = 5/0; %>
+	</c:catch>
+	<c:if  test="${catchError  != null}">
+		Error: ${catchError.message}
+	</c:if>
+
+++) giống điều kiện switch case
+	 <c:choose> 
+		<c:when>
+		</c:when>
+		<c:when>
+		</c:when>
+		<c:otherwise>
+		</c:otherwise>	
+	</c:choose>
+
+++) <c:forEach > : Duyệt phần tử trong mảng mà k biết trước mảng đó có bao nhiêu phần tử
+	<c:forEach items="${lstNV}" var="nv">
+		<c:out value="${nv.manv}"/> -- <c:out value="${nv.ten}"/> <br/>
+	</c:forEach>
+	
+++) <c:forToken> : cắt chuỗi theo trong mảng theo kí tự.
+	<c:forTokens items="Thong, dep, trai, thong, minh" delims="," var="name">
+		<c:out value="${name}"/>
+	</c:forTokens>
+	
+Bài 38: DATA ACCESS.
+-- https://docs.spring.io/spring/docs/current/spring-framework-reference/data-access.html
+
+Bài 39: Connect mysql by MySQL
+-- https://dev.mysql.com/downloads/windows/
+++) Tải và cài đặt MySQL installer và MySQL workbench
+	PORT: 3303 Pass: 123456   ServerName: MySQLThong
+++)  Cấu hình và tải thêm thư viện "commons dbcp" trong file POM
+++)  Cấu hình và tải thêm thư viện "mysql connector" trong file POM
+++)  Cấu hình và tải thêm thư viện "spring-jdbc" trong file POM
+1) Cấu hình in IoC.xml file
+	<bean id="dbMinishop" class="com.thongtv.entities.DatabaseShop">
+		<property name="datasource" ref="datasource" />
+	</bean>
+	
+	<bean id="datasource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/minishop" />
+		<property name="username" value="root" />
+		<property name="password" value="" />
+	</bean>	
+2) trong class DatabaseShop phải có @Reponsitory ở trên đầu class và @Autowired ở trên method setDatasource
+	@Autowired
+	public void setDatasource(DataSource dbMinishop) {
+		this.jdbcTemplate = new JdbcTemplate(dbMinishop);
+	}
+
+
+
+Bài 40: Herbinate : 
+https://docs.jboss.org/hibernate/orm/5.2/userguide/html_single/Hibernate_User_Guide.html
+http://hibernate.org/orm/documentation/5.2/
+++) 4 mục chính: Session factory -- entity manager -- session -- transaction
+++) anotation: @Entity(name = "[nameTabaleInDataBase]") --> put it above on a class
+	@Id 	--> set primary Id for attribute in class
+	@Basic	--> set basic datatype for attribute
+	@Column(name = "[nameFieldInDatabase]")
+	@Embeddable	--> nhúng custom datatype.
+	@Enumerated(EnumType.STRING)  --> nhập string vào bảng
+	@Enumerated(EnumType.ORIGINAL)  --> nhập số vào bảng (theo thứ tự từ trên xuống dưới của kiểu enum) 
++) value type: kiểu dữ liệu tương ứng. VD: Varchar ~~ Java.lang.String
+
+
+
+Bài 41: Connect Database use herbinate
+1) import library: 	hibernate core -- Spring tx (tạo @transaction bỏ qua begin and close) -- ORM (mapping bảng thành file java class)
+2) Cách mapping kiểu cũ của Hibernate.
+	Tạo ra các file .hbm.xml và các attributes tương ứng vs từng bảng trong csdl để mapping tới các bảng.
+3) Kiểu mới từ Hibernate 5.0 trở lên.
+	+) Tạo config trong IoC.xml file
+		<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+			<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+			<property name="url" value="jdbc:mysql://localhost:3306/minishop" />
+			<property name="username" value="root" />
+			<property name="password" value="" />
+		</bean>	
+		
+		<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+			<property name="dataSource" ref="dataSource" />
+			<property name="packagesToScan" value="com.thongtv.entities"/>
+			<property name="hibernateProperties">
+				<props>
+					<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+					<prop key="hibernate.show_sql">true</prop>
+				</props>
+			</property>
+		</bean>
+		
+		<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+			<property name="sessionFactory" ref="sessionFactory"/>
+		</bean>
+		<tx:annotation-driven transaction-manager="transactionManager"/>
+	+) Tạo class mapping vs table trong csld. (Từ thư viện: import javax.persistence.*;)
+		** @Entity(name="Table")	** @Id 		**@Column(name="[nameField]")
+	+) Controller
+		** @Autowired
+		   SessionFactory sessionFactory;
+		** @Transactional      (trên functionl thực hiện truy vấn tới csdl. của thư viện org.springframework.transaction.annotation.Transactional)
+
+
+
+
+
+Bài 42: Bootstrap
+http://getbootstrap.com/
+class="container-fluid" ===> full màn hình khác với class="container"
+class="row"  ===> đây là thẻ div bao ngoài của class ở dưới.
+class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"
+** < 576px	>= 576px	>= 768px	>= 992px 	>=1200px
+	col- 		sm 			md 			lg 			xl 
+
+
+
+Bài 43: javascript
+++) $(document).ready(function(){
+	$("name").click(function(){
+		$(this).addClass("nameclass");
+		$(this).removeClass("nameclass");
+		var chuoi = $(this).attr("nameAttr");
+		$(this).attr("nameattr", value);
+		alert(chuoi);
+	})
+})
+
+++) import css ở head
+++) import js ở cuối body
+
+Bài 46: Interface of home page
+++) overlay color for background. 
+++)
+	@media (max-width: 991px){ }
+	@media (min-width: 768px) and (max-width: 991px) {}
+++) sử dụng !important
+
+Bài 47: hiệu ứng animation
+++) https://wowjs.uk/
+
+
+
+Bài 52: insert update delete database sử dụng hibernate.
+@GeneratedValue(strategy = GenerationType.IDENTITY) : dữ liệu tự tăng
+		
+		Session session = sessionFactory.getCurrentSession();
+	//update
+		NhanVien nv = (NhanVien) session.createQuery("from nhanvien where idNhanVien = 10").uniqueResult();
+		nv.setTenNhanVien("Superman");
+		session.update(nv);
+		NhanVien nv1 = session.get(NhanVien.class, 10);
+		nv1.setTenNhanVien("Chuẩn ccmnr");
+		session.update(nv1);
+	//insert
+		NhanVien nv = new NhanVien(ten, tuoi);
+			session.save(nv);
+	//delete
+		session.delete(nv);
+
+@ManyToMany(cascade= CascadeType.ALL)
+@JoinTable(name="name_table")
+
+Bài 56: One to one hibernate 
+@OneToOne(cascade = CascadeType.ALL)  -->"CascadeType.ALL": tự động tham chiếu dữ liệu cho các bên liên quan.
+@JoinColumn(name="namecolumn")
+   ++)https://www.journaldev.com/3793/hibernate-tutorial
+
+
+Video 57: @ManyToMany. @OneToMany
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name="nhanvien_sanpham",
+			joinColumns={@JoinColumn(name="idNhanVien", referencedColumnName="id")},
+			inverseJoinColumns= {@JoinColumn(name="idSanPham", referencedColumnName="id")}
+			)
+	Set<Product> set; 
+
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="id_employee")
+	Set<Product> set;	
+
+
+Video 60: Hiện thực hóa csdl ra Hibernate.
+1) Tra cứu mapping type trong hibernate để biết được các kiểu giá trị tương ứng giữa database và core.
+	Bit --> boolean.
+2) Tạo Class java entity có 2 thuộc tính khóa. 
+	* Tạo class (Temp) chứa 2 thuộc tính khóa. (getter setter)
+	* trên đầu class entity cho anotation: @IdClass(Temp.class)
+	* Trong class entity: Cho mỗi @Id trên mỗi thuộc tính khóa.
+	C2: tạo embededID. 	
+
+Video 61: Chức năng login
+	
+Video 62: mohinh DAO (data access object) and service. ta thường kết nối trực tiếp từ controller <=> DB : sai
+	* Controller <=> service <=> DAO <=> Database
+	* @Service, @reponsitory, @Component ==> class chứa các anotation này sẽ tự động @autowired tới db.
+	* k được tao new object cho các class service vì nó sẽ làm mất các annotation.
+	* Đặt @Reponsitory trên các class DAO
+	* đặt component-scan trên các package service va DAO
+
+Video 63: proxy : tăng tốc độ truy cập
+	* https://spring.io/blog/2012/05/23/transactions-caching-and-aop-understanding-proxy-usage-in-spring
+	* @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+
+
+
+
+
+
+
+
+

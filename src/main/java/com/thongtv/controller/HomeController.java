@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.thongtv.entities.Users;
 
 @Controller
-
+@RequestMapping("/")
 public class HomeController {
 	
 	@Autowired
@@ -22,20 +22,19 @@ public class HomeController {
 	
 	@GetMapping
 	@Transactional
-	@RequestMapping("/")
 	public String loginPage() {
 		
-		/*Session session = this.sessionFactory.getCurrentSession();
+		Session session = this.sessionFactory.getCurrentSession();
 				
-		Users user = new Users( );
+/*		Users user = new Users( );
 		user.setUsername("thong.tv");
 		user.setEmail("thong.tv@mail.com");
 		user.setPassword("12345");
 		user.setPhone("0987234234");
 		user.setAddress("Gò Vấp");
 
-		session.save(user);*/
-		
+		session.save(user);
+*/		
 		return "login";
 	}
 	
