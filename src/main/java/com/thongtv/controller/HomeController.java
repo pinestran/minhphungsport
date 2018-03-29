@@ -35,7 +35,7 @@ public class HomeController {
 
 		session.save(user);
 */		
-		return "login";
+		return "index";
 	}
 	
 	@RequestMapping("/cart")

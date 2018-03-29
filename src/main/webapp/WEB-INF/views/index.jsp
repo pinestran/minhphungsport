@@ -51,7 +51,7 @@
 		      		</c:when>
 		      		
 		      		<c:otherwise>
-		      			 <li><a href="dangnhap/">ĐĂNG NHẬP</a></li>
+		      			 <li><a href="login/">ĐĂNG NHẬP</a></li>
 		      		</c:otherwise>
 		      	</c:choose>
 		       

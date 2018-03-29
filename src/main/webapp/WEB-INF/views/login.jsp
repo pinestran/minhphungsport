@@ -1,22 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>    
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style type="text/css" ></style>
-<link rel="stylesheet" type="text/css" href="<c:url value='resources/css/login.css'/>"/>
+<link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/login.css'/>"/>
+
 </head>
 <body class="full-img">
 
 <div id="content" >
 	<div id="login-session">
 	<h2>Login Form</h2>
-		<form action="/action_page.php" >
+		<form action="" method="post" >
 		  <div class="imgcontainer">
-		    <img src="<c:url value='resources/img/account.png'/>" alt="Avatar" class="avatar">
+		    <img src="<c:url value='/resources/img/account.png'/>" alt="Avatar" class="avatar">
 		  </div>
 		
 		  <div class="container">
@@ -27,14 +28,14 @@
 		    <input type="password" placeholder="Enter Password" name="password" required>
 		        
 		    <button type="submit">Login</button>
-		    <a href="#" id="register" style="text-align:center;">Register</a>
+		    <a href="#" id="register" style="text-align:center;">Register ${result}</a>
 		   <!--  <label>
 		      <input type="checkbox" checked="checked" name="remember"> Remember me
 		    </label> -->
 		  </div>
 		
 		  <div class="container" style="background-color:#f1f1f1">
-		    <a href="index.html"><button type="button" class="cancelbtn">Cancel</button></a>
+		    <a href="<c:url value='/'/>"><button type="button" class="cancelbtn">Cancel</button></a>
 		    <span class="psw"> <a href="#" class="forgot">Forgot password?</a></span>
 	  	   </div>
 		</form>	
@@ -43,7 +44,7 @@
 		<h2>Reset Password Form</h2>
 		<form action="" method="post">
 			<div class="imgcontainer">
-		    <img src="<c:url value='resources/img/account.png'/>" alt="Avatar" class="avatar">
+		    <img src="<c:url value='/resources/img/account.png'/>" alt="Avatar" class="avatar">
 		  </div>
 		
 		  <div class="container">
@@ -54,7 +55,7 @@
 		  </div>
 		
 		  <div class="container" style="background-color:#f1f1f1">
-		  	<a href="index.html"><button type="button" class="cancelbtn">Cancel</button></a>
+		  	<a href="<c:url value='/'/>"><button type="button" class="cancelbtn">Cancel</button></a>
 		    <span class="psw"><a href="#" class="backtosignin">Back To Signin</a></span>
 		  </div>
 		</form>
@@ -63,7 +64,7 @@
 	<h2>Register Form</h2>
 		<form id="SubmitForm" action="" method="post">
 		  <div class="imgcontainer">
-		    <img src="<c:url value='resources/img/account.png'/>" alt="Avatar" class="avatar">
+		    <img src="<c:url value='/resources/img/account.png'/>" alt="Avatar" class="avatar">
 		  </div>
 		
 		  <div class="container">
@@ -87,7 +88,7 @@
 		  </div>
 		
 		  <div class="container" style="background-color:#f1f1f1">
-		    <a href="index.html"><button type="button" class="cancelbtn">Cancel</button></a>
+		    <a href="<c:url value='/'/>"><button type="button" class="cancelbtn">Cancel</button></a>
 		    <span class="psw"> <a href="#" class="forgot">Forgot password?</a></span>
 	  	   </div>
 		</form>	
@@ -102,6 +103,6 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript" src="js/login.js"></script>
+<script type="text/javascript" src="<c:url value='/resources/js/login.js'/> "></script>
 </body>
 </html>

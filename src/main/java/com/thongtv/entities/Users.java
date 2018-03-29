@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity(name="USERS")
@@ -29,7 +31,10 @@ public class Users {
 	
 	@Column(name="date_of_account")
 	private Calendar dataOfAccount;
-	private String role;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="id_role", nullable=false)
+	private Role role;
 
 	/**
 	 * LAZY = fetch when needed 
@@ -52,7 +57,7 @@ public class Users {
 
 	public Users(String username, String password, String email,
 			String phone, String address,
-			Calendar dataOfAccount, String role) {
+			Calendar dataOfAccount, Role role) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
@@ -134,11 +139,11 @@ public class Users {
 		this.dataOfAccount = dataOfAccount;
 	}
 
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 
